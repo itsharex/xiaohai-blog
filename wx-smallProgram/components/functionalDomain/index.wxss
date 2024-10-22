@@ -19,6 +19,7 @@
 .svg{
     width: 30rpx;
     height: 30rpx;
+    font-size: 30rpx;
 }
 .flex_con{
     display: flex;

@@ -14,3 +14,11 @@ export function getComment(id){
 		method: 'get',
 	})
 }
+// 文章点赞
+export function articleLike(data){
+	return instance.request({
+		url: `/note/article-like`,
+		method: 'post',
+		data
+	})
+}

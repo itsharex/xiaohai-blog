@@ -22,5 +22,5 @@
 		<towxml nodes="{{nodes}}"/>
 		<comments-section comment-list="{{commentList}}"></comments-section>
 	</view>
-	<functional-domain></functional-domain>
+	<functional-domain articleId="{{id}}" clickLike="{{clickLike}}" bind:refresh="refreshHandle"></functional-domain>
 </view>

@@ -24,7 +24,8 @@ Component({
     createdTime:'',
     pageView:'',
     id:'',
-    commentList:[]
+    commentList:[],
+    clickLike:null
   },
 
   /**
@@ -54,6 +55,7 @@ Component({
           userBasic:res.data.userBasic,
           createdTime:res.data.createdTime,
           pageView:res.data.pageView,
+          clickLike:res.data.clickLike,
         })
       })
     },
@@ -63,6 +65,9 @@ Component({
           commentList:res.data.commentTrees
         })
       })
+    },
+    refreshHandle(){
+      this.getArticleDetails() // 文章详情
     }
   }
 })

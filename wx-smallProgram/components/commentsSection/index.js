@@ -21,8 +21,6 @@ Component({
     fileUrl:getApp().globalData.fileUrl,
   },
 created() {
-    console.log('zou')
-  console.log(this.properties,'11111')
 },
   /**
    * 组件的方法列表
