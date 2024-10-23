@@ -1,0 +1,7 @@
+{
+  "usingComponents": {
+    "content-list":"/components/contentList/index",
+    "load-more": "/components/loadMore/index",
+    "svg-icon": "/components/svgIcon/index"
+  }
+}

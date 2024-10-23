@@ -7,7 +7,8 @@
     "custom-tab-bar/index",
     "pages/tags/index",
     "pages/article/index",
-    "pages/search/index"
+    "pages/search/index",
+    "pages/dataList/index"
   ],
   "window": {
     "navigationBarTextStyle": "black",

@@ -25,9 +25,16 @@
     right: 0;
     bottom: 0;
     margin: auto;
-} 
+}
+.nav{
+    position: absolute;
+    left: 10rpx;
+    top: 20rpx;
+    font-size: 40rpx;
+    color: white;
+}
 .head_img{
-    width: 90%;    
+    width: 90%;
     height: 90%;
     border-radius: 50%;
 }
@@ -81,4 +88,22 @@
 .exhibition_num{
     font-weight: 600;
     font-size: 18px;
+}
+.popup_left{
+    width: 200rpx;
+    height: 100%;
+    background-color: white;
+    padding: 20rpx;
+}
+.head_box_mine{
+    width: 100rpx;
+    height: 100rpx;
+    background-color: #dddddd;
+    border-radius: 50%;
+    margin: 0 auto;
+    margin-bottom: 40rpx;
+}
+.menu{
+    width: 100%;
+    height: 100rpx;
 }

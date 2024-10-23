@@ -16,6 +16,13 @@ Page({
       {title:'分类',num:'5'},
       {title:'标签',num:'39'},
       {title:'评论',num:'0'},
+    ],
+    show:false,
+    navMenu:[
+      {name:'登录',key:'1'},
+      {name:'个人信息',key:'1'},
+      {name:'登录',key:'1'},
+      {name:'登录',key:'1'},
     ]
   },
 
@@ -82,5 +89,11 @@ Page({
         })
       })
     }
+  },
+  openNav(){
+    this.setData({ show: true });
+  },
+  onClose() {
+    this.setData({ show: false });
   },
 })

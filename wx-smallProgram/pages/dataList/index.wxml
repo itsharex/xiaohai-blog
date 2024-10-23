@@ -1,0 +1,8 @@
+<view>
+    <view class="flex_box">
+        <svg-icon src="/images/tags/tags.svg" width="40rpx"></svg-icon>
+        <view style="margin-left:10rpx;">{{name}}</view>
+    </view>
+    <content-list content-list="{{contentList}}"></content-list>
+    <load-more list-is-empty="{{!contentList.length}}" status="{{loadStatus}}"></load-more>
+</view>

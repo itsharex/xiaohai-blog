@@ -1,9 +1,10 @@
 <view class="main_contain">
 	<view class="flex_box">
-		<view wx:for="{{tagsList}}" wx:key="index" class="tags">
+		<view wx:for="{{tagsList}}" wx:key="index" data-name="{{item.name}}" data-id="{{item.id}}" bind:tap="getList" class="tags">
 			<view class="tags_left">#</view>
-			<text>{{item.title}}</text>
-			<view class="num">{{item.num}}</view>
+			<text>{{item.name}}</text>
+			<view class="num">{{item.count}}</view>
 		</view>
 	</view>
 </view>
+

@@ -26,7 +26,7 @@ instance.interceptors.response = (response) => {
     wx.showToast({
       title: data.msg
     })
-    return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
+    return Promise.reject(data.msg)
 
   }else{
     return data
