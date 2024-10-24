@@ -1,4 +1,6 @@
 // pages/homePage/index.js
+import {loginApi} from "../../utils/api/mine";
+
 Page({
 
   /**
@@ -23,7 +25,10 @@ Page({
       {name:'个人信息',key:'1'},
       {name:'登录',key:'1'},
       {name:'登录',key:'1'},
-    ]
+    ],
+    loginShow:false,
+    username:'',
+    password:'',
   },
 
   /**
@@ -96,4 +101,19 @@ Page({
   onClose() {
     this.setData({ show: false });
   },
+  loginHandle(){
+    this.setData({ loginShow: true });
+  },
+  onCloseLogin(){
+    this.setData({ loginShow: false });
+  },
+  login(){
+    loginApi({
+      username:this.data.username,
+      password:this.data.password,
+    }).then(res=>{
+      wx.setStorageSync('token',res.data)
+      this.onCloseLogin()
+    })
+  }
 })

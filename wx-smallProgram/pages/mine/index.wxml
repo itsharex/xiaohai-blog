@@ -2,7 +2,7 @@
     <view class="bg_box">
         <image src="https://nas.dotcode.top:60002/assets/1-12420eae.jpg" class="image"></image>
         <van-icon name="wap-nav" class="nav" bind:tap="openNav"/>
-        <view class="head_box">
+        <view class="head_box" bind:tap="loginHandle">
             <image src="https://nas.dotcode.top:60002/api/document/upload/files/1/avatar/e8eca782392e4a95b91297270dbce11e.png" class="head_img"></image>
         </view>
     </view>
@@ -28,6 +28,16 @@
         </view>
         <view wx:for="{{navMenu}}" key="index" class="menu">
             <view>{{item.name}}</view>
+        </view>
+    </van-popup>
+    <van-popup show="{{ loginShow }}" position="bottom" custom-style="height: 45%;" round bind:close="onCloseLogin">
+        <view class="login">
+            <view class="blog">DotCode's Blog</view>
+            <view>
+                <input model:value="{{username}}"  class="weui-input input" auto-focus placeholder="请输入用户名/邮箱"/>
+                <input model:value="{{password}}"  class="weui-input input" auto-focus placeholder="请输入密码"/>
+            </view>
+            <button class="button" bind:tap="login">登  录</button>
         </view>
     </van-popup>
 </view>

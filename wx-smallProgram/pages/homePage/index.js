@@ -23,7 +23,7 @@ Page({
       pageSize:10,
       total:0,
       allPageNum:1,// 总页数
-      type:6,
+      type:1,
       id:''
     },
     loadStatus:0,// 数据状态
@@ -130,12 +130,14 @@ Page({
     this.setData({
       loadStatus:1
     })
-    reqSwiperData({
+    let data={
       pageNum:this.data.paramsData.pageNum,
       pageSize:this.data.paramsData.pageSize,
       type:this.data.paramsData.type,
       id:this.data.paramsData.id,
-    }).then(res=>{
+    }
+    if (!data.id) delete data.id
+    reqSwiperData({...data}).then(res=>{
       this.setData({
         contentList:status?this.data.contentList.concat(res.data.records):res.data.records,
         "paramsData.allPageNum":Math.ceil(res.data.total / res.data.size),
@@ -151,14 +153,14 @@ Page({
     let res = await getCategory()
     this.setData({
       classifyList:res.data,
-      "paramsData.id":res.data[0].id,
     },()=>{
       this.getContentList()
     })
   },
   handleTab(event){
     this.setData({
-      "paramsData.id":this.data.classifyList[event.detail.index].id,
+      "paramsData.id":event.detail.index == 0?'':this.data.classifyList[event.detail.index - 1].id,
+      "paramsData.type":event.detail.index == 0?1:6,
       "paramsData.pageNum":1
     },()=>{
       this.getContentList(false)

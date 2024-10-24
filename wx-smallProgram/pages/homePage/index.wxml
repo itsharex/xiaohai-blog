@@ -22,8 +22,8 @@
     <van-sticky>
         <view class="title_box">
             <van-tabs active="{{ active }}"  bind:change="handleTab">
-                <van-tab wx:for="{{classifyList}}" wx:key="index" title="{{item.name}}">
-                </van-tab>
+                <van-tab title="全部" key="all"></van-tab>
+                <van-tab wx:for="{{classifyList}}" wx:key="index" title="{{item.name}}"></van-tab>
             </van-tabs>
         </view>
     </van-sticky>

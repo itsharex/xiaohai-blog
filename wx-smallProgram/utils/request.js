@@ -8,8 +8,9 @@ const instance = new WxRequest({
 // 添加请求拦截器
 instance.interceptors.request = (config) => {
   const token = wx.getStorageSync('token')
+  console.log(token,'okkk')
   if (token) {
-    config.header['token'] = token
+    config.header['Authorization'] = token
   }
   return config
 }
