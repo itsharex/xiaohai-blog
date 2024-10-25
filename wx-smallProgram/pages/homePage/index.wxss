@@ -45,3 +45,19 @@
 	text-align: center;
 	padding-top: 15rpx;
 }
+.swiper_title{
+	position: absolute;
+	bottom: 50rpx;
+	background: rgba(0, 0, 0, .3);
+	width: 100%;
+	text-align: center;
+	height: 60rpx;
+	line-height: 60rpx;
+	color: #ecf8ff;
+	font-size: 700;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	box-sizing: border-box;
+	padding: 0 20rpx;
+}

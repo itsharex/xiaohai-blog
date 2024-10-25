@@ -170,5 +170,11 @@ Page({
     wx.navigateTo({
       url:`/pages/search/index?keywords=${this.data.keywords}`
     })
+  },
+  viewDetail(event){
+    let id = event.currentTarget.id
+    wx.navigateTo({
+      url:`/pages/article/index?id=${id}`
+    })
   }
 })

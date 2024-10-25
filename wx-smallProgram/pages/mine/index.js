@@ -1,6 +1,6 @@
 // pages/homePage/index.js
-import {loginApi} from "../../utils/api/mine";
-
+import {getInfo, loginApi} from "../../utils/api/mine";
+import Toast from "@vant/weapp/toast/toast";
 Page({
 
   /**
@@ -29,13 +29,15 @@ Page({
     loginShow:false,
     username:'',
     password:'',
+    info:{},
+    fileUrl:getApp().globalData.fileUrl
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad(options) {
-
+    this.setInfo()
   },
 
   /**
@@ -102,6 +104,8 @@ Page({
     this.setData({ show: false });
   },
   loginHandle(){
+    let token=wx.getStorageSync('token')?JSON.parse(wx.getStorageSync('token')):''
+    if (token) return;
     this.setData({ loginShow: true });
   },
   onCloseLogin(){
@@ -113,7 +117,24 @@ Page({
       password:this.data.password,
     }).then(res=>{
       wx.setStorageSync('token',res.data)
+      this.getInfo()
+      Toast('登录成功');
       this.onCloseLogin()
     })
+  },
+  getInfo(){
+    getInfo().then(res=>{
+      wx.setStorageSync('info',JSON.stringify(res.data.info))
+      this.setInfo()
+    })
+  },
+  setInfo(){
+    console.log(wx.getStorageSync('info'),'wx.getStorageSync(\'info\')')
+    let info=wx.getStorageSync('info') ?JSON.parse(wx.getStorageSync('info')):''
+    if (info){
+      this.setData({
+        info:info,
+      })
+    }
   }
 })

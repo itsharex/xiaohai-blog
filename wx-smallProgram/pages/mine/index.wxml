@@ -3,12 +3,12 @@
         <image src="https://nas.dotcode.top:60002/assets/1-12420eae.jpg" class="image"></image>
         <van-icon name="wap-nav" class="nav" bind:tap="openNav"/>
         <view class="head_box" bind:tap="loginHandle">
-            <image src="https://nas.dotcode.top:60002/api/document/upload/files/1/avatar/e8eca782392e4a95b91297270dbce11e.png" class="head_img"></image>
+            <image src="{{fileUrl + info.avatar}}" class="head_img"></image>
         </view>
     </view>
     <view class="nick_box">
-        <view class="nickname">小海</view>
-        <view>用一点点代码，改变生活</view>
+        <view class="nickname">{{info.nickName}}</view>
+        <view>{{info.summary}}</view>
     </view>
     <view class="icon_box">
         <view wx:for="{{iconList}}" wx:key= "index">
@@ -25,6 +25,7 @@
     </view>
     <van-popup custom-class="popup_left" show="{{ show }}" position="left" bind:close="onClose" class="popup_left">
         <view class="head_box_mine">
+            <image src="{{headImg}}" class="head_img"></image>
         </view>
         <view wx:for="{{navMenu}}" key="index" class="menu">
             <view>{{item.name}}</view>
@@ -35,9 +36,10 @@
             <view class="blog">DotCode's Blog</view>
             <view>
                 <input model:value="{{username}}"  class="weui-input input" auto-focus placeholder="请输入用户名/邮箱"/>
-                <input model:value="{{password}}"  class="weui-input input" auto-focus placeholder="请输入密码"/>
+                <input model:value="{{password}}" password  class="weui-input input" auto-focus placeholder="请输入密码"/>
             </view>
             <button class="button" bind:tap="login">登  录</button>
         </view>
     </van-popup>
+    <van-toast id="van-toast" />
 </view>
