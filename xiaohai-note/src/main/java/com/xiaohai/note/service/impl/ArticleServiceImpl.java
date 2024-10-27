@@ -124,9 +124,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     public Integer delete(Long[] ids) {
         for (Long id : ids) {
             Article oldArticle = baseMapper.selectById(id);
-            if (!Objects.equals(oldArticle.getUserId(), Integer.valueOf((String) StpUtil.getLoginId())) && !StpUtil.hasRole(Constants.ADMIN)) {
-                throw new ServiceException("非当前用户数据无法删除");
-            }
+            RoleUtils.checkActiveUserAndAdmin(oldArticle.getUserId());
             //删除标签关联
             articleTagService.delete(Math.toIntExact(id));
             //删除文章
@@ -139,9 +137,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Transactional(rollbackFor = Exception.class)
     public Integer updateData(ArticleVo vo) {
         Article oldArticle = baseMapper.selectById(vo.getId());
-        if (!Objects.equals(oldArticle.getUserId(), Integer.valueOf((String) StpUtil.getLoginId())) && !StpUtil.hasRole(Constants.ADMIN)) {
-            throw new ServiceException("非当前用户数据无法更新");
-        }
+        RoleUtils.checkActiveUserAndAdmin(oldArticle.getUserId());
         Article article = new Article();
         BeanUtils.copyProperties(vo, article);
         //顶置写入时间
@@ -165,9 +161,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Override
     public Integer updateDraft(ArticleDraftVo vo) {
         Article oldArticle = baseMapper.selectById(vo.getId());
-        if (!Objects.equals(oldArticle.getUserId(), Integer.valueOf((String) StpUtil.getLoginId())) && !StpUtil.hasRole(Constants.ADMIN)) {
-            throw new ServiceException("非当前用户数据无法更新");
-        }
+        RoleUtils.checkActiveUserAndAdmin(oldArticle.getUserId());
         Article article = new Article();
         BeanUtils.copyProperties(vo, article);
         article.setUpdatedTime(LocalDateTime.now());
@@ -297,10 +291,12 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             if (ids.length == 1) {
                 Article article = baseMapper.selectById(id);
                 Assert.isTrue(article.getCategoryId() != null, "数据不完整无法发布");
+                RoleUtils.checkActiveUserAndAdmin(article.getUserId());
                 article.setIsPush(1);
                 return baseMapper.updateById(article);
             }
             Article article = baseMapper.selectById(id);
+            RoleUtils.checkActiveUserAndAdmin(article.getUserId());
             if (article.getCategoryId() != null) {
                 article.setIsPush(1);
                 baseMapper.updateById(article);
@@ -313,6 +309,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Transactional(rollbackFor = Exception.class)
     public Integer unpublish(Long[] ids) {
         for (Long id : ids) {
+            Article oldArticle = baseMapper.selectById(id);
+            RoleUtils.checkActiveUserAndAdmin(oldArticle.getUserId());
             Article article = new Article();
             article.setId(Math.toIntExact(id));
             article.setIsPush(0);
