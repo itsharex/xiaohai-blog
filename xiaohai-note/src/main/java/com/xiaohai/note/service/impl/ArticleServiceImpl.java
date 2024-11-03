@@ -217,11 +217,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Override
     public ReturnPageData<ArticleDto> findListByPage(ArticleQuery query) {
-        Integer userId = query.getUserId();
+        Long userId = query.getUserId();
         //判断角色是否是管理员和demo
         if (RoleUtils.checkRole() && userId == null) {
             //不是管理员、demo只查询当前用户数据
-            userId = Integer.valueOf((String) StpUtil.getLoginId());
+            userId = Long.valueOf((String) StpUtil.getLoginId());
         }
         IPage<ArticleDto> wherePage = new Page<>(PageUtils.getPageNo(), PageUtils.getPageSize());
         IPage<ArticleDto> iPage = baseMapper.selectPageArticleQuery(wherePage, query, userId);
@@ -505,6 +505,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                 orderByDesc("top_time").
                 orderByDesc("created_time"));
         String tempFile = StringUtil.generateUUIDWithoutHyphens();
+        if(articles.isEmpty()){
+            throw new ServiceException("没有文章可以导出");
+        }
         //压缩文件临时路径
         String path = fileConfig.getFilePath() + StpUtil.getLoginId() + File.separator + FileConstants.TEMPORARY_FILE + File.separator + FileConstants.EXPORT_FILE + File.separator + tempFile + File.separator;
         try {

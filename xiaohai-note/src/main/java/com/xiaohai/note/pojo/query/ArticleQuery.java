@@ -47,5 +47,5 @@ public class ArticleQuery implements Serializable {
     private Integer isOriginal;
 
     @Parameter(description = "用户id")
-    private Integer userId;
+    private Long userId;
 }

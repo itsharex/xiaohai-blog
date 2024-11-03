@@ -134,7 +134,7 @@
         </el-table-column>
         <el-table-column label="创建时间" align="center" prop="createdTime" width="160" />
         <el-table-column label="最后登录时间" align="center" prop="loginDate" width="160" />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" fixed="right" min-width="140">
+        <el-table-column v-if="$store.getters.permission.includes('system:user:delete')||$store.getters.permission.includes('system:user:update')" label="操作" align="center" class-name="small-padding fixed-width" fixed="right" min-width="140">
           <template slot-scope="scope">
             <el-button
               v-if="$store.getters.permission.includes('system:user:update')"

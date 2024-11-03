@@ -117,7 +117,7 @@
         </el-table-column>
         <el-table-column label="创建时间" align="center" prop="createdTime" width="180" />
         <el-table-column label="更新时间" align="center" prop="updatedTime" width="180" />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width" width="140">
+        <el-table-column v-if="$store.getters.permission.includes('system:dict:update')||$store.getters.permission.includes('system:dict:delete')" label="操作" align="center" class-name="small-padding fixed-width" width="140">
           <template slot-scope="scope">
             <el-button
               v-if="$store.getters.permission.includes('system:dict:update')"

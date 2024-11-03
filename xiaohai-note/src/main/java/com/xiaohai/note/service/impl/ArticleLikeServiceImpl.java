@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.xiaohai.common.daomain.PageData;
 import com.xiaohai.common.daomain.ReturnPageData;
 import com.xiaohai.common.utils.PageUtils;
+import com.xiaohai.common.utils.RoleUtils;
 import com.xiaohai.note.dao.ArticleLikeMapper;
 import com.xiaohai.note.dao.ArticleMapper;
 import com.xiaohai.note.dao.NotificationsMapper;
@@ -24,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -68,8 +70,11 @@ public class ArticleLikeServiceImpl extends ServiceImpl<ArticleLikeMapper, Artic
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public Integer delete(Long[] ids){
         for (Long id : ids) {
+            ArticleLike oldArticle = baseMapper.selectById(id);
+            RoleUtils.checkActiveUserAndAdmin(oldArticle.getUserId());
             baseMapper.deleteById(id);
             notificationsMapper.delete(new QueryWrapper<Notifications>().eq("like_id",id));
         }
@@ -90,7 +95,13 @@ public class ArticleLikeServiceImpl extends ServiceImpl<ArticleLikeMapper, Artic
 
     @Override
     public ReturnPageData<ArticleLikeDto> findListByPage(ArticleLikeQuery query){
-        query.setUserId(Long.valueOf((String) StpUtil.getLoginId()));
+        Long userId = query.getUserId();
+        //判断角色是否是管理员和demo
+        if (RoleUtils.checkRole() && userId == null) {
+            //不是管理员、demo只查询当前用户数据
+            userId = Long.valueOf((String) StpUtil.getLoginId());
+        }
+        query.setUserId(userId);
         IPage<ArticleLikeDto> wherePage = new Page<>(PageUtils.getPageNo(), PageUtils.getPageSize());
         IPage<ArticleLikeDto> iPage = baseMapper.selectArticleLikePage(wherePage,query);
 
