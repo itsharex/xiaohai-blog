@@ -4,7 +4,8 @@
     </view>
     <view class="flex_icon">
         <view class="flex_con" bind:tap="likeHandle">
-            <image src="../../images/homepage/give-light.svg" class="svg"></image>
+            <image wx:if="{{clickLike === 0}}" src="../../images/homepage/give-light.svg" class="svg"></image>
+            <image wx:else src="../../images/homepage/give-dark.svg" class="svg"></image>
             点赞
         </view>
         <view class="flex_con">

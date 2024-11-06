@@ -8,7 +8,6 @@ const instance = new WxRequest({
 // 添加请求拦截器
 instance.interceptors.request = (config) => {
   const token = wx.getStorageSync('token')
-  console.log(token,'okkk')
   if (token) {
     config.header['Authorization'] = token
   }
@@ -22,13 +21,13 @@ instance.interceptors.response = (response) => {
   const code = response.data.code || 200;
   // 如果 isSuccess 为 false，说明执行了 fail 回调函数
   // 这时候就说明网络异常，需要给用户提示网络异常
-  console.log(response,'code')
   if (code === 401){
     wx.showToast({
-      title: data.msg
+      title: data.msg,
+      icon:'none'
     })
+    wx.clearStorageSync()
     return Promise.reject(data.msg)
-
   }else{
     return data
   }

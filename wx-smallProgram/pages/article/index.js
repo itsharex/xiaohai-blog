@@ -25,7 +25,8 @@ Component({
     pageView:'',
     id:'',
     commentList:[],
-    clickLike:null
+    clickLike:null,
+    likeCount:null,
   },
 
   /**
@@ -56,6 +57,7 @@ Component({
           createdTime:res.data.createdTime,
           pageView:res.data.pageView,
           clickLike:res.data.clickLike,
+          likeCount:res.data.likeCount,
         })
       })
     },

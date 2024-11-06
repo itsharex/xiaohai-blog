@@ -14,8 +14,8 @@ Page({
       pageSize:10,
       total:0,
       allPageNum:1,// 总页数
-      type:5,
     },
+    type:null,
     contentList:[],
     name:''
   },
@@ -27,6 +27,7 @@ Page({
     this.setData({
       id:options.id,
       name:options.name,
+      type:options.type,
     },()=>{
       this.getContentList()
     })
@@ -107,7 +108,7 @@ Page({
     reqSwiperData({
       pageNum:this.data.paramsData.pageNum,
       pageSize:this.data.paramsData.pageSize,
-      type:this.data.paramsData.type,
+      type:this.data.type,
       id:this.data.id,
     }).then(res=>{
       this.setData({

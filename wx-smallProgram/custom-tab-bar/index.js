@@ -4,6 +4,10 @@ Component({
       "pagePath": "/pages/homePage/index",
       "text": "首页"
     },
+      {
+        "pagePath": "/pages/category/index",
+        "text": "分类"
+      },
     {
       "pagePath": "/pages/tags/index",
       "text": "标签"

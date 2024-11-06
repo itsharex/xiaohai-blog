@@ -47,6 +47,10 @@ Component({
         clickLike:this.properties.clickLike == null || this.properties.clickLike == 0?1:0
       }).then(res=>{
         this.triggerEvent('refresh')
+        wx.showToast({
+          title:'操作成功',
+          icon:'none'
+        })
       })
     }
   }

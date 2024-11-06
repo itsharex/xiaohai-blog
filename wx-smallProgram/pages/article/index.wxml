@@ -10,9 +10,13 @@
 							<image src="../../images/homepage/time-light.svg" class="svg"></image>
 							{{createdTime}}
 						</view>
-						<view class="flex">
+						<view class="flex" style="margin-right: 20rpx;">
 							<image src="../../images/homepage/eye-light.svg" class="svg"></image>
 							{{pageView}}
+						</view>
+						<view class="flex">
+							<image src="../../images/homepage/give-light.svg" class="svg"></image>
+							{{likeCount}}
 						</view>
 					</view>
 			</view>

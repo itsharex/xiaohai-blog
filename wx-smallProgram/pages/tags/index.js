@@ -31,7 +31,7 @@ Component({
       if (typeof this.getTabBar === 'function' ) {
         this.getTabBar((tabBar) => {
           tabBar.setData({
-            selected: 1
+            selected: 2
           })
         })
       }
@@ -46,7 +46,7 @@ Component({
     getList(e){
       let {id,name} = {...e.currentTarget.dataset}
       wx.navigateTo({
-        url:`/pages/dataList/index?id=${id}&name=${name}`
+        url:`/pages/dataList/index?id=${id}&name=${name}&type=${5}`
       })
     }
   }

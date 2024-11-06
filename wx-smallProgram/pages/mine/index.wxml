@@ -41,5 +41,4 @@
             <button class="button" bind:tap="login">登  录</button>
         </view>
     </van-popup>
-    <van-toast id="van-toast" />
 </view>

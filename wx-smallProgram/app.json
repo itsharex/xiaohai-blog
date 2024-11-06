@@ -8,11 +8,12 @@
     "pages/tags/index",
     "pages/article/index",
     "pages/search/index",
-    "pages/dataList/index"
+    "pages/dataList/index",
+    "pages/category/index"
   ],
   "window": {
     "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "Weixin",
+    "navigationBarTitleText": "Dotcode",
     "navigationBarBackgroundColor": "#ffffff",
     "enablePullDownRefresh": true
   },
@@ -21,6 +22,10 @@
       {
         "pagePath": "pages/homePage/index",
         "text": "首页"
+      },
+      {
+        "pagePath": "pages/category/index",
+        "text": "分类"
       },
       {
         "pagePath": "pages/tags/index",

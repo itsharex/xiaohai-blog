@@ -1,6 +1,5 @@
 // pages/homePage/index.js
 import {getInfo, loginApi} from "../../utils/api/mine";
-import Toast from "@vant/weapp/toast/toast";
 Page({
 
   /**
@@ -92,7 +91,7 @@ Page({
     if (typeof this.getTabBar === 'function' ) {
       this.getTabBar((tabBar) => {
         tabBar.setData({
-          selected: 2
+          selected: 3
         })
       })
     }
@@ -104,7 +103,7 @@ Page({
     this.setData({ show: false });
   },
   loginHandle(){
-    let token=wx.getStorageSync('token')?JSON.parse(wx.getStorageSync('token')):''
+    let token=wx.getStorageSync('token')?wx.getStorageSync('token'):''
     if (token) return;
     this.setData({ loginShow: true });
   },
@@ -118,7 +117,10 @@ Page({
     }).then(res=>{
       wx.setStorageSync('token',res.data)
       this.getInfo()
-      Toast('登录成功');
+      wx.showToast({
+        title:'登录成功',
+        icon:'none'
+      })
       this.onCloseLogin()
     })
   },
@@ -129,7 +131,6 @@ Page({
     })
   },
   setInfo(){
-    console.log(wx.getStorageSync('info'),'wx.getStorageSync(\'info\')')
     let info=wx.getStorageSync('info') ?JSON.parse(wx.getStorageSync('info')):''
     if (info){
       this.setData({
