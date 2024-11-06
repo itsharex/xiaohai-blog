@@ -55,9 +55,8 @@
   </el-drawer>
 </template>
 <script>
-import { delFileIds, getBackupFiles, getExportFiles } from '@/api/file/file'
+import { delFileIds, getBackupFiles } from '@/api/file/file'
 import { calculateTimeDifference, downloadFile, getFileAddress } from '@/utils/common'
-import { exportMarkdown } from '@/api/note/article'
 import { addBackup, restoreFileName } from '@/api/system/buckup'
 
 export default {
@@ -79,22 +78,30 @@ export default {
     calculateTimeDifference,
     // 备份
     handleBackup() {
-      this.visible = false
-      const loading = this.$loading({
-        lock: true,
-        text: '正在备份中，请耐心等待',
-        spinner: 'el-icon-loading',
-        background: 'rgba(0, 0, 0, 0.7)'
-      })
-      addBackup().then(response => {
-        loading.close()
-        this.$message.success(response.msg)
-        this.getList()
-      }).catch(error => {
-        console.log(error)
-        loading.close()
-        this.$message.error('备份失败')
-        console.error(error)
+      this.$confirm('是否确认备份？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.visible = false
+        const loading = this.$loading({
+          lock: true,
+          text: '正在备份中，请耐心等待',
+          spinner: 'el-icon-loading',
+          background: 'rgba(0, 0, 0, 0.7)'
+        })
+        addBackup().then(response => {
+          loading.close()
+          this.$message.success(response.msg)
+          this.getList()
+        }).catch(error => {
+          console.log(error)
+          loading.close()
+          this.$message.error('备份失败')
+          console.error(error)
+        })
+      }).catch(() => {
+        this.$message.info('已取消备份')
       })
     },
     getList() {

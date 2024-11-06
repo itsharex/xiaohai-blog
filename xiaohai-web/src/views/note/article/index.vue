@@ -307,7 +307,7 @@
                       icon="el-icon-circle-close"
                       style="color: red;"
                       hover-colo="red"
-                      @click.native="push(scope.row)"
+                      @click.native="unpush(scope.row)"
                     >
                       取消发布
                     </el-dropdown-item>
@@ -483,6 +483,7 @@ export default {
         type: 'warning'
       }).then(() => {
         updatePush(ids).then(response => {
+          console.log(response)
           this.$message.success(response.msg)
           this.getList()
         })

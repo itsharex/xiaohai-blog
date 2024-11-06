@@ -34,5 +34,6 @@ public class ArticleLikeQuery implements Serializable {
     @Schema(description = "标签id")
     private Long tagId;
 
+    @Parameter(description = "用户id")
     private Long userId;
 }

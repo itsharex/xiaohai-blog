@@ -1,5 +1,6 @@
 package com.xiaohai.system.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -11,6 +12,7 @@ import com.xiaohai.common.daomain.ReturnPageData;
 import com.xiaohai.common.exception.ServiceException;
 import com.xiaohai.common.utils.DictUtils;
 import com.xiaohai.common.utils.PageUtils;
+import com.xiaohai.common.utils.StringUtil;
 import com.xiaohai.system.dao.DictDataMapper;
 import com.xiaohai.system.dao.DictTypeMapper;
 import com.xiaohai.system.pojo.dto.DictTypeDto;
@@ -95,10 +97,13 @@ public class DictTypeServiceImpl extends ServiceImpl<DictTypeMapper, DictType> i
 
     @Override
     public ReturnPageData<DictType> findListByPage(DictTypeQuery query) {
-        DictType dictType = new DictType();
-        BeanUtils.copyProperties(query, dictType);
         IPage<DictType> wherePage = new Page<>(PageUtils.getPageNo(), PageUtils.getPageSize());
-        IPage<DictType> iPage = baseMapper.selectPage(wherePage, Wrappers.query(dictType));
+        IPage<DictType> iPage = baseMapper.selectPage(wherePage, new LambdaQueryWrapper<DictType>()
+                .eq(StringUtil.isNotBlank(query.getDictName()), DictType::getDictName, query.getDictName())
+                .like(StringUtil.isNotBlank(query.getDictType()),  DictType::getDictType, query.getDictType())
+                .eq(StringUtil.isNotBlank(query.getStatus()), DictType::getStatus, query.getStatus())
+        );
+
         PageData pageData = new PageData();
         BeanUtils.copyProperties(iPage, pageData);
         return ReturnPageData.fillingData(pageData, iPage.getRecords());

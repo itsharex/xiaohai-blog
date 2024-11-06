@@ -124,9 +124,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     public Integer delete(Long[] ids) {
         for (Long id : ids) {
             Article oldArticle = baseMapper.selectById(id);
-            if (!Objects.equals(oldArticle.getUserId(), Integer.valueOf((String) StpUtil.getLoginId())) && !StpUtil.hasRole(Constants.ADMIN)) {
-                throw new ServiceException("非当前用户数据无法删除");
-            }
+            RoleUtils.checkActiveUserAndAdmin(oldArticle.getUserId());
             //删除标签关联
             articleTagService.delete(Math.toIntExact(id));
             //删除文章
@@ -139,9 +137,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Transactional(rollbackFor = Exception.class)
     public Integer updateData(ArticleVo vo) {
         Article oldArticle = baseMapper.selectById(vo.getId());
-        if (!Objects.equals(oldArticle.getUserId(), Integer.valueOf((String) StpUtil.getLoginId())) && !StpUtil.hasRole(Constants.ADMIN)) {
-            throw new ServiceException("非当前用户数据无法更新");
-        }
+        RoleUtils.checkActiveUserAndAdmin(oldArticle.getUserId());
         Article article = new Article();
         BeanUtils.copyProperties(vo, article);
         //顶置写入时间
@@ -165,9 +161,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Override
     public Integer updateDraft(ArticleDraftVo vo) {
         Article oldArticle = baseMapper.selectById(vo.getId());
-        if (!Objects.equals(oldArticle.getUserId(), Integer.valueOf((String) StpUtil.getLoginId())) && !StpUtil.hasRole(Constants.ADMIN)) {
-            throw new ServiceException("非当前用户数据无法更新");
-        }
+        RoleUtils.checkActiveUserAndAdmin(oldArticle.getUserId());
         Article article = new Article();
         BeanUtils.copyProperties(vo, article);
         article.setUpdatedTime(LocalDateTime.now());
@@ -223,11 +217,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Override
     public ReturnPageData<ArticleDto> findListByPage(ArticleQuery query) {
-        Integer userId = query.getUserId();
+        Long userId = query.getUserId();
         //判断角色是否是管理员和demo
         if (RoleUtils.checkRole() && userId == null) {
             //不是管理员、demo只查询当前用户数据
-            userId = Integer.valueOf((String) StpUtil.getLoginId());
+            userId = Long.valueOf((String) StpUtil.getLoginId());
         }
         IPage<ArticleDto> wherePage = new Page<>(PageUtils.getPageNo(), PageUtils.getPageSize());
         IPage<ArticleDto> iPage = baseMapper.selectPageArticleQuery(wherePage, query, userId);
@@ -297,10 +291,12 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             if (ids.length == 1) {
                 Article article = baseMapper.selectById(id);
                 Assert.isTrue(article.getCategoryId() != null, "数据不完整无法发布");
+                RoleUtils.checkActiveUserAndAdmin(article.getUserId());
                 article.setIsPush(1);
                 return baseMapper.updateById(article);
             }
             Article article = baseMapper.selectById(id);
+            RoleUtils.checkActiveUserAndAdmin(article.getUserId());
             if (article.getCategoryId() != null) {
                 article.setIsPush(1);
                 baseMapper.updateById(article);
@@ -313,6 +309,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Transactional(rollbackFor = Exception.class)
     public Integer unpublish(Long[] ids) {
         for (Long id : ids) {
+            Article oldArticle = baseMapper.selectById(id);
+            RoleUtils.checkActiveUserAndAdmin(oldArticle.getUserId());
             Article article = new Article();
             article.setId(Math.toIntExact(id));
             article.setIsPush(0);
@@ -507,6 +505,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                 orderByDesc("top_time").
                 orderByDesc("created_time"));
         String tempFile = StringUtil.generateUUIDWithoutHyphens();
+        if(articles.isEmpty()){
+            throw new ServiceException("没有文章可以导出");
+        }
         //压缩文件临时路径
         String path = fileConfig.getFilePath() + StpUtil.getLoginId() + File.separator + FileConstants.TEMPORARY_FILE + File.separator + FileConstants.EXPORT_FILE + File.separator + tempFile + File.separator;
         try {

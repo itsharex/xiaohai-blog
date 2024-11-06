@@ -80,6 +80,9 @@
                   </el-select>
                 </el-col>
                 <el-col :span="1.5">
+                  <UserSelect v-model="queryParams.userId" @change="handleQuery" />
+                </el-col>
+                <el-col :span="1.5">
                   <el-tooltip class="item" effect="dark" content="刷新" placement="top-start">
                     <el-button icon="el-icon-refresh" size="mini" style="min-width: 0;" circle @click="handleQuery" />
                   </el-tooltip>
@@ -192,9 +195,11 @@ import { optionSelectCategory } from '@/api/note/category'
 import { optionSelectTags } from '@/api/note/tags'
 import { delLike, listLikes } from '@/api/note/like'
 import { articleView, image } from '@/utils/common'
+import UserSelect from '@/components/Select/UserSelect.vue'
 
 export default {
   name: 'Index',
+  components: { UserSelect },
   data() {
     return {
       url: process.env.VUE_APP_BLOG_WEB_API,
