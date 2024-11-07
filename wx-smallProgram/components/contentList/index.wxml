@@ -9,7 +9,7 @@
 	<view class="bottom_box">
 		<view class="info_flex" style="width: 30%;">
 			<image src="{{fileUrl + item.avatar}}" class="head"></image>
-			<view>{{item.nickName}}</view>
+			<view class="nickName">{{item.nickName}}</view>
 		</view>
 		<view class="info_flex" style="width: 200rpx;justify-content: space-between;">
 			<view class="flex_center">
