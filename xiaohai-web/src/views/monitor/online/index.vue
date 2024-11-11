@@ -29,7 +29,7 @@
         </el-table-column>
         <el-table-column label="登录时间" align="center" prop="loginDate" />
         <el-table-column label="过期时间" align="center" prop="logoutDate" />
-        <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
+        <el-table-column v-if="$store.getters.permission.includes('monitor:online:delete')" label="操作" align="center" class-name="small-padding fixed-width">
           <template slot-scope="scope">
             <el-button
               v-if="$store.getters.permission.includes('monitor:online:delete')"
