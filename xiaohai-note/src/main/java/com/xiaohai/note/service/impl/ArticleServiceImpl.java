@@ -7,7 +7,6 @@ import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -46,16 +45,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -128,9 +124,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     public Integer delete(Long[] ids) {
         for (Long id : ids) {
             Article oldArticle = baseMapper.selectById(id);
-            if (!Objects.equals(oldArticle.getUserId(), Integer.valueOf((String) StpUtil.getLoginId())) && !StpUtil.hasRole(Constants.ADMIN)) {
-                throw new ServiceException("非当前用户数据无法删除");
-            }
+            RoleUtils.checkActiveUserAndAdmin(oldArticle.getUserId());
             //删除标签关联
             articleTagService.delete(Math.toIntExact(id));
             //删除文章
@@ -143,9 +137,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Transactional(rollbackFor = Exception.class)
     public Integer updateData(ArticleVo vo) {
         Article oldArticle = baseMapper.selectById(vo.getId());
-        if (!Objects.equals(oldArticle.getUserId(), Integer.valueOf((String) StpUtil.getLoginId())) && !StpUtil.hasRole(Constants.ADMIN)) {
-            throw new ServiceException("非当前用户数据无法更新");
-        }
+        RoleUtils.checkActiveUserAndAdmin(oldArticle.getUserId());
         Article article = new Article();
         BeanUtils.copyProperties(vo, article);
         //顶置写入时间
@@ -169,9 +161,7 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Override
     public Integer updateDraft(ArticleDraftVo vo) {
         Article oldArticle = baseMapper.selectById(vo.getId());
-        if (!Objects.equals(oldArticle.getUserId(), Integer.valueOf((String) StpUtil.getLoginId())) && !StpUtil.hasRole(Constants.ADMIN)) {
-            throw new ServiceException("非当前用户数据无法更新");
-        }
+        RoleUtils.checkActiveUserAndAdmin(oldArticle.getUserId());
         Article article = new Article();
         BeanUtils.copyProperties(vo, article);
         article.setUpdatedTime(LocalDateTime.now());
@@ -227,11 +217,11 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Override
     public ReturnPageData<ArticleDto> findListByPage(ArticleQuery query) {
-        Integer userId = query.getUserId();
+        Long userId = query.getUserId();
         //判断角色是否是管理员和demo
         if (RoleUtils.checkRole() && userId == null) {
             //不是管理员、demo只查询当前用户数据
-            userId = Integer.valueOf((String) StpUtil.getLoginId());
+            userId = Long.valueOf((String) StpUtil.getLoginId());
         }
         IPage<ArticleDto> wherePage = new Page<>(PageUtils.getPageNo(), PageUtils.getPageSize());
         IPage<ArticleDto> iPage = baseMapper.selectPageArticleQuery(wherePage, query, userId);
@@ -301,10 +291,12 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
             if (ids.length == 1) {
                 Article article = baseMapper.selectById(id);
                 Assert.isTrue(article.getCategoryId() != null, "数据不完整无法发布");
+                RoleUtils.checkActiveUserAndAdmin(article.getUserId());
                 article.setIsPush(1);
                 return baseMapper.updateById(article);
             }
             Article article = baseMapper.selectById(id);
+            RoleUtils.checkActiveUserAndAdmin(article.getUserId());
             if (article.getCategoryId() != null) {
                 article.setIsPush(1);
                 baseMapper.updateById(article);
@@ -317,6 +309,8 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
     @Transactional(rollbackFor = Exception.class)
     public Integer unpublish(Long[] ids) {
         for (Long id : ids) {
+            Article oldArticle = baseMapper.selectById(id);
+            RoleUtils.checkActiveUserAndAdmin(oldArticle.getUserId());
             Article article = new Article();
             article.setId(Math.toIntExact(id));
             article.setIsPush(0);
@@ -359,14 +353,14 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
         PageData pageData = new PageData();
         BeanUtils.copyProperties(iPage, pageData);
         //标签
-        if (type == 5) {
+        if (type!=null&&type == 5) {
             Tags tag = new Tags();
             tag.setId(Math.toIntExact(id));
             tag.setClick(tagsMapper.selectById(Math.toIntExact(id)).getClick() + 1);
             tagsMapper.updateById(tag);
         }
         //分类
-        if (type == 6) {
+        if (type!=null&&type == 6) {
             Category category = new Category();
             category.setId(Math.toIntExact(id));
             category.setClick(categoryMapper.selectById(Math.toIntExact(id)).getClick() + 1);
@@ -397,15 +391,19 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
 
     @Override
     public List<ArticleSearchDto> searchArticle(String keywords) {
-        // 搜索文章
-        List<Article> articles = baseMapper.selectList(new QueryWrapper<Article>()
-                .eq("is_push", 1)
-                .like("title", keywords)
-                .or().like("summary", keywords).
-                orderByDesc("is_top").
-                orderByDesc("top_time").
-                orderByDesc("created_time"));
         List<ArticleSearchDto> list = new ArrayList<>();
+        if(StringUtil.isBlank(keywords)){
+            return list;
+        }
+        // 搜索文章
+        List<Article> articles = baseMapper.selectList(new LambdaQueryWrapper<Article>()
+                .eq(Article::getIsPush, 1)
+                .like(Article::getTitle, keywords)
+                .or().like(Article::getSummary, keywords).
+                orderByDesc(Article::getIsTop).
+                orderByDesc(Article::getTopTime).
+                orderByDesc(Article::getCreatedTime));
+
         for (Article article : articles) {
             ArticleSearchDto articleSearchDto = new ArticleSearchDto();
             // 文章标题高亮
@@ -507,6 +505,9 @@ public class ArticleServiceImpl extends ServiceImpl<ArticleMapper, Article> impl
                 orderByDesc("top_time").
                 orderByDesc("created_time"));
         String tempFile = StringUtil.generateUUIDWithoutHyphens();
+        if(articles.isEmpty()){
+            throw new ServiceException("没有文章可以导出");
+        }
         //压缩文件临时路径
         String path = fileConfig.getFilePath() + StpUtil.getLoginId() + File.separator + FileConstants.TEMPORARY_FILE + File.separator + FileConstants.EXPORT_FILE + File.separator + tempFile + File.separator;
         try {

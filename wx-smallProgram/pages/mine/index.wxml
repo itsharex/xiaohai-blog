@@ -1,0 +1,44 @@
+<view class="main_contain">
+    <view class="bg_box">
+        <image src="https://nas.dotcode.top:60002/assets/1-12420eae.jpg" class="image"></image>
+        <van-icon name="wap-nav" class="nav" bind:tap="openNav"/>
+        <view class="head_box" bind:tap="loginHandle">
+            <image src="{{fileUrl + info.avatar}}" class="head_img"></image>
+        </view>
+    </view>
+    <view class="nick_box">
+        <view class="nickname">{{info.nickName}}</view>
+        <view>{{info.summary}}</view>
+    </view>
+    <view class="icon_box">
+        <view wx:for="{{iconList}}" wx:key= "index">
+            <view class="icon_bg">
+                <image src="{{item.url}}" class="icon_content"></image>
+            </view>
+        </view>
+    </view>
+    <view class="exhibition_box">
+        <view wx:for="{{exhibitionlist}}" wx:key="index" class="exhibition_flex">
+            <view class="exhibition_title">{{item.title}}</view>
+            <view class="exhibition_num">{{item.num}}</view>
+        </view>
+    </view>
+    <van-popup custom-class="popup_left" show="{{ show }}" position="left" bind:close="onClose" class="popup_left">
+        <view class="head_box_mine">
+            <image src="{{headImg}}" class="head_img"></image>
+        </view>
+        <view wx:for="{{navMenu}}" key="index" class="menu">
+            <view>{{item.name}}</view>
+        </view>
+    </van-popup>
+    <van-popup show="{{ loginShow }}" position="bottom" custom-style="height: 45%;" round bind:close="onCloseLogin">
+        <view class="login">
+            <view class="blog">DotCode's Blog</view>
+            <view>
+                <input model:value="{{username}}"  class="weui-input input" auto-focus placeholder="请输入用户名/邮箱"/>
+                <input model:value="{{password}}" password  class="weui-input input" auto-focus placeholder="请输入密码"/>
+            </view>
+            <button class="button" bind:tap="login">登  录</button>
+        </view>
+    </van-popup>
+</view>

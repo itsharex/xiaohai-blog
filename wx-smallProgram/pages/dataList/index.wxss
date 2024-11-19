@@ -1,0 +1,6 @@
+/* pages/dataList/index.wxss */
+.flex_box{
+    display: flex;
+    height: 70rpx;
+    align-items: center;
+}

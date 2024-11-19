@@ -40,5 +40,4 @@ docker/blog
 docker/mysql
 docker/redis
 docker/web/nginx/log
-
-
+wx-smallProgram/miniprogram_npm

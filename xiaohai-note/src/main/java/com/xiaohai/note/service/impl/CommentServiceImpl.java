@@ -85,6 +85,8 @@ public class CommentServiceImpl extends ServiceImpl<CommentMapper, Comment> impl
     @Transactional(rollbackFor = Exception.class)
     public Integer delete(Long[] ids) {
         for (Long id : ids) {
+            Comment query=baseMapper.selectById(id);
+            RoleUtils.checkActiveUserAndAdmin(query.getUserId());
             baseMapper.deleteById(id);
             //对应的评论一起删掉
             List<Comment> commentList = baseMapper.selectList(new QueryWrapper<Comment>().select("id").eq("parent_id", id));

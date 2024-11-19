@@ -88,10 +88,9 @@ export default {
         this.$message.success(response.msg)
         this.getList()
       }).catch(error => {
-        console.log(error)
         loading.close()
-        this.$message.error('导出失败')
-        console.error(error)
+        this.$message.error(error.message || '导出失败')
+        console.error(error.message)
       })
     },
     getList() {

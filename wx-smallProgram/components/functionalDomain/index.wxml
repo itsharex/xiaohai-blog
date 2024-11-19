@@ -1,0 +1,23 @@
+<view class="contain_box">
+    <view class="input">
+        <input class="input_ui"  placeholder="评论一句吧..."/>
+    </view>
+    <view class="flex_icon">
+        <view class="flex_con" bind:tap="likeHandle">
+            <image wx:if="{{clickLike === 0}}" src="../../images/homepage/give-light.svg" class="svg"></image>
+            <image wx:else src="../../images/homepage/give-dark.svg" class="svg"></image>
+            点赞
+        </view>
+        <view class="flex_con">
+            <van-icon name="star-o"  class="svg"/>
+            收藏
+        </view>
+        <view class="flex_con">
+            <button id="share" open-type="share" style="display:hidden"></button>
+            <label for="share">
+                <van-icon name="share-o" class="svg"/>
+            </label>
+            <label for="share">分享</label>
+        </view>
+    </view>
+</view>

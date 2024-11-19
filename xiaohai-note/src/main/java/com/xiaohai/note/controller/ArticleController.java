@@ -158,6 +158,7 @@ public class ArticleController {
     public Response<ArticleExistDto> existState(@ParameterObject @Validated  ArticleExistQuery query) {
         return Response.success("查询文章存在状态成功！", articleService.existState(query));
     }
+
     @Operation(summary = "本地上传文章", security = {@SecurityRequirement(name = Constants.SESSION_ID)})
     @SaCheckPermission(value = {"note:article:add","note:article:update"}, mode = SaMode.AND)
     @PostMapping("/local/upload")

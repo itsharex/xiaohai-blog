@@ -1,5 +1,6 @@
 package com.xiaohai.system.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -15,6 +16,7 @@ import com.xiaohai.common.utils.Spring.SpringUtils;
 import com.xiaohai.common.utils.StringUtil;
 import com.xiaohai.system.dao.DictDataMapper;
 import com.xiaohai.system.pojo.entity.DictData;
+import com.xiaohai.system.pojo.entity.DictType;
 import com.xiaohai.system.pojo.query.DictDataQuery;
 import com.xiaohai.system.pojo.vo.DictDataVo;
 import com.xiaohai.system.service.DictDataService;
@@ -76,10 +78,13 @@ public class DictDataServiceImpl extends ServiceImpl<DictDataMapper, DictData> i
 
     @Override
     public ReturnPageData<DictData> findListByPage(DictDataQuery query) {
-        DictData dictData = new DictData();
-        BeanUtils.copyProperties(query, dictData);
         IPage<DictData> wherePage = new Page<>(PageUtils.getPageNo(), PageUtils.getPageSize());
-        IPage<DictData> iPage = baseMapper.selectPage(wherePage, Wrappers.query(dictData).last(" order by dict_sort asc"));
+        IPage<DictData> iPage = baseMapper.selectPage(wherePage, new LambdaQueryWrapper<DictData>()
+                        .like(StringUtil.isNotBlank(query.getDictType()), DictData::getDictType, query.getDictType())
+                        .eq(StringUtil.isNotBlank(query.getDictLabel()), DictData::getDictLabel, query.getDictLabel())
+                        .eq(StringUtil.isNotBlank(query.getStatus()), DictData::getStatus, query.getStatus())
+                        .orderByAsc(DictData::getDictSort)
+                );
         PageData pageData = new PageData();
         BeanUtils.copyProperties(iPage, pageData);
         return ReturnPageData.fillingData(pageData, iPage.getRecords());
@@ -104,7 +109,7 @@ public class DictDataServiceImpl extends ServiceImpl<DictDataMapper, DictData> i
         Map<String, List<DictDataEntity>> map = new HashMap<>();
         Collection<String> keys = SpringUtils.getBean(RedisUtils.class).keys(RedisConstants.SYS_DICT_KEY + "*");
         for (String key : keys) {
-            key=key.replace(RedisConstants.SYS_DICT_KEY,"");
+            key = key.replace(RedisConstants.SYS_DICT_KEY, "");
             List<DictDataEntity> dictDataEntities = DictUtils.getDictCache(key);
             if (StringUtil.isNotEmpty(dictDataEntities)) {
                 map.put(key, dictDataEntities);
